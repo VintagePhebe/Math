@@ -1,58 +1,62 @@
-# coso = '2x + 3y = 20'
-# chese = '2x - 3y = 8'
+# objective transfoer a float to  a ratio ex. 1.5 = 3/2
+from math import gcd
+input = float(input('inserire il prprio numero:\t'))
 
-# coso = '3x + 2y = 7'
-# chese = '6x + 4x = 14'
+def get_ciphers(flt):
+    ciphers = []
+    try:
+        input = str(flt)
+    except:
+        print('error')
 
-coso = '6x - 2y = 5'
-chese = '18x - 6y = -1'
-def get_matrix(coefficents):
-    matrix = []
-    ram = ''
-    for i in coefficents:
-        if i != 'x' and i != 'y' and i != '=':
-            ram += i
-        elif i == 'x' or i == 'y':
-            matrix.append(ram.replace(' ', ''))
-            ram = ''
-    else:
-        matrix.append(ram.strip())
-    print(matrix)
-    return matrix
+    for i in input:
+        ciphers.append(i)
+    return ciphers
+def get_pointPosition(ciphers):
+    point_position = 0
+    check = False
+    for i in ciphers:
+        if i == '.':
+            check = True
+        elif check == True:
+            point_position += 1
+    return point_position
+def get_divisor(pointPosition):
+    divisor = 10 ** pointPosition
+    return divisor
+def get_intNumber(ciphers):
+    intNumber = ''
+    for i in ciphers:
+        if i != '.':
+            intNumber += i
 
-def transform_in_int(matrix):
-    final_matrix = []
-    for i in matrix:
-        try:
-            i = int(i)
-            final_matrix.append(i)
-        except:
-            print('error')
-    print(final_matrix)
-    return final_matrix
-def solve_system(m1, m2):
-    check1 = m1[0]/m2[0]
-    check2 = m1[1]/m2[1]
-    check3 = m1[2]/m2[2]
-    if check1 == check2 == check3:
-        print('sistema indeterminato')
-
-    elif check1 == check2 != check3:
-        print('sistema impossibile')
-
-    else:
-        d = m1[0]*m2[1]-m2[0]*m1[1]
-        dx = m1[2]*m2[1]-m2[2]*m1[1]
-        dy = m1[0]*m2[2]-m2[0]*m1[2]
-
-        x_value = dx / d
-        y_value = dy / d
-
-        print(f'd = {d}\ndx = {dx}\ndy = {dy}')
-        print(f'x = {x_value}\ny = {y_value}')
+    return intNumber
 
 
-matrix1 = transform_in_int(get_matrix(coso))
-matrix2 = transform_in_int(get_matrix(chese))
+def get_GTD(intNUmber, Divisor):
+    try:
+        New_intNumber = int(intNUmber)
+    except:
+        pass
+    GCD = gcd(New_intNumber,Divisor)
+    return GCD
+def get_ratio(intNumber, divisor, GCD):
+    new_in = intNumber // GCD
+    new_div = divisor // GCD
+    return f'{new_in}/{new_div}'
 
-solve_system(matrix1, matrix2)
+ciphers = get_ciphers(input)
+pointerPosition = get_pointPosition(ciphers)
+divisor = get_divisor(pointerPosition)
+intNumber = get_intNumber(ciphers)
+try:
+    New_intNumber = int(intNumber)
+except:
+    pass
+GCD = get_GTD(New_intNumber, divisor)
+ratio = get_ratio(New_intNumber, divisor, GCD)
+
+#print(f'ciphers = \t{ciphers}\npointerPosition = \t{pointerPosition}\ndivisor = \t{divisor}\nintNumber = \t{intNumber}\nGCD = \t{GCD}\nratio = \t {ratio}')
+
+print(f'the ratio of your float is:\t{ratio}')
+
