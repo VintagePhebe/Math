@@ -4,8 +4,8 @@
 # coso = '3x + 2y = 7'
 # chese = '6x + 4x = 14'
 
-coso = '-8x + 4y  = - 6'
-chese = '4x - 2y  = - 3'
+coso = '6x - 2y = 5'
+chese = '18x - 6y = -1'
 def get_matrix(coefficents):
     matrix = []
     ram = ''
@@ -16,7 +16,7 @@ def get_matrix(coefficents):
             matrix.append(ram.replace(' ', ''))
             ram = ''
     else:
-        matrix.append(ram.replace(' ', ''))
+        matrix.append(ram.strip())
     print(matrix)
     return matrix
 

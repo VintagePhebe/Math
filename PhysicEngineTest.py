@@ -1,30 +1,32 @@
 import pygame as pg
-from random import randrange
 import pymunk.pygame_util
-pymunk.pygame_util.positive_y_is_up = False
+import pymunk
+from random import randrange
+import math
+
+pg.init()
 
 RES = WIDTH, HEIGHT = 1200, 1000
 FPS = 60
 
-pg.init()
 surface = pg.display.set_mode(RES)
 clock = pg.time.Clock()
 draw_options = pymunk.pygame_util.DrawOptions(surface)
 
 space = pymunk.Space()
-space.gravity = 0, 8000
-ball_mass, ball_radius = 1, 7
-segment_thickness = 6
+space.gravity = 0, 800
 
-a, b, c, d = 10, 100, 18, 40
-x1, x2, x3, x4 = a, WIDTH // 2 - c, WIDTH // 2 + c, WIDTH - a
-y1, y2, y3, y4, y5 = b, HEIGHT // 4 - d, HEIGHT // 4, HEIGHT // 2 - 1.5 * b, HEIGHT - 4 * b
-L1, L2, L3, L4 = (x1, -100), (x1, y1), (x2, y2), (x2, y3)
-R1, R2, R3, R4 = (x4, -100), (x4, y1), (x3, y2), (x3, y3)
-B1, B2 = (0, HEIGHT), (WIDTH, HEIGHT)
-bottom_barrier = (B1, B2)  # Bottom barrier segment
+# Ball properties with radii multiplied by 7
+ball_data = [
+    (pg.Color(255, 0, 0), 7 * 7),      # Dimension 1: Red
+    (pg.Color(0, 255, 0), 10 * 7),     # Dimension 2: Green
+    (pg.Color(0, 0, 255), 13 * 7),     # Dimension 3: Blue
+]
 
-# Function to create boundary segments
+ball_shapes = [pymunk.Circle(space.static_body, radius) for _, radius in ball_data]
+
+balls = []
+
 def create_boundary_segment(from_, to_, thickness, space, color):
     segment_shape = pymunk.Segment(space.static_body, from_, to_, thickness)
     segment_shape.color = pg.color.THECOLORS[color]
@@ -32,40 +34,70 @@ def create_boundary_segment(from_, to_, thickness, space, color):
     segment_shape.friction = 0.5
     space.add(segment_shape)
 
-# Create boundary segments to enclose the screen
-create_boundary_segment((0, 0), (WIDTH, 0), 20, space, 'darkslategray')
-create_boundary_segment((0, 0), (0, HEIGHT), 20, space, 'darkslategray')
-create_boundary_segment((WIDTH, 0), (WIDTH, HEIGHT), 20, space, 'darkslategray')
-create_boundary_segment(*bottom_barrier, 20, space, 'darkslategray')  # Add the bottom barrier
-
-def create_ball(space):
-    ball_moment = pymunk.moment_for_circle(ball_mass, 0, ball_radius)
+def create_ball(space, position, dimension):
+    color, radius = ball_data[dimension]
+    ball_mass = 1
+    ball_moment = pymunk.moment_for_circle(ball_mass, 0, radius)
     ball_body = pymunk.Body(ball_mass, ball_moment)
-    ball_body.position = randrange(x2, x3), randrange(y2, y4)  # Ensure balls are within the box
-    ball_shape = pymunk.Circle(ball_body, ball_radius)
+    ball_body.position = position
+    ball_shape = pymunk.Circle(ball_body, radius)
     ball_shape.elasticity = 0.1
     ball_shape.friction = 10
     space.add(ball_body, ball_shape)
-    return ball_body
+    return color, ball_body, dimension
 
-# Rest of your code...
-
-# balls
-balls = [([randrange(256) for i in range(3)], create_ball(space)) for j in range(6)]
+for i in range(4):
+    thickness = 20
+    color = 'darkslategray'
+    if i == 0:
+        from_, to_ = (0, 0), (WIDTH, 0)
+    elif i == 1:
+        from_, to_ = (0, 0), (0, HEIGHT)
+    elif i == 2:
+        from_, to_ = (WIDTH, 0), (WIDTH, HEIGHT)
+    else:
+        from_, to_ = (0, HEIGHT), (WIDTH, HEIGHT)
+    create_boundary_segment(from_, to_, thickness, space, color)
 
 while True:
     surface.fill(pg.Color('black'))
 
-    for i in pg.event.get():
-        if i.type == pg.QUIT:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
             exit()
+        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
+            mouse_x, mouse_y = pg.mouse.get_pos()
+            # Create the smallest ball (dimension 1) when clicking
+            color, ball, dimension = create_ball(space, (mouse_x, mouse_y), 0)
+            balls.append((color, ball, dimension))  # Store color, body, and dimension
 
     space.step(1 / FPS)
     space.debug_draw(draw_options)
 
-    # [pg.draw.circle(surface, color, ball.position, ball_radius) for color, ball in balls]
-    [pg.draw.circle(surface, color, (int(ball.position[0]), int(ball.position[1])),
-                    ball_radius) for color, ball in balls]
+    # Check for ball merging
+    i = 0
+    while i < len(balls) - 1:
+        color1, ball1, dimension1 = balls[i]
+        color2, ball2, dimension2 = balls[i + 1]
+
+        if dimension1 == dimension2:
+            # Merge the balls to the next dimension
+            new_dimension = dimension1 + 1
+
+            if new_dimension < len(ball_data):
+                # Create a new merged ball
+                color, new_ball, _ = create_ball(space, ball1.position, new_dimension)
+                balls.pop(i)  # Remove the first ball
+                balls.pop(i)  # Remove the second ball
+                balls.append((color, new_ball, new_dimension))  # Add the merged ball
+            else:
+                i += 1
+        else:
+            i += 1
+
+    # Draw the balls
+    for color, ball, _ in balls:
+        pg.draw.circle(surface, color, (int(ball.position.x), int(ball.position.y)), ball_shapes[0].radius)
 
     pg.display.flip()
     clock.tick(FPS)
