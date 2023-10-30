@@ -26,9 +26,8 @@ def get_coordinates(grid):
         x += 1
         for value in list:
             y += 1
-
             if value == 1:
-                container_list.append([x, y])
+                container_list.append([y, x])
         y = -1
     print(container_list)
     return container_list
@@ -51,7 +50,6 @@ def get_key(list):
 
 
 
-
 list_of_coordinates = get_coordinates(grid)
 dic_grid = list_of_lists_to_dict(grid)
 
@@ -59,14 +57,26 @@ dic_grid = list_of_lists_to_dict(grid)
 for i in list_of_coordinates:
     coordinates = []
     coordinates = get_key(i)
+    try:
+        coordinates1 = (coordinates[0] - 1, coordinates[1] + 0)
+        print(dic_grid[coordinates1])
+
+    except KeyError:
+        print('something aint right')
+        coordinates1 = 0
+''' -1 +0 x
+    -1 -1
+    -1 +1
+    +0 -1
+    +0 +1
+    +1 +0
+    +1 -1
+    +1 +1
+'''
 
 
+coordinates = get_key(list_of_coordinates[3])
+coordinates1 = (coordinates[0] - 1, coordinates[1] + 0)
 
 
-
-
-
-
-
-
-get_coordinates(grid)
+print(dic_grid[coordinates1])
