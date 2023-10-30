@@ -48,6 +48,16 @@ def get_key(list):
         key.append(i)
     return tuple(key)
 
+def findAdiacentValues(var1, var2):
+
+    try:
+        AdiacentValue = (coordinates[0] + var1, coordinates[1] + var2)
+        return dic_grid[AdiacentValue]
+
+    except KeyError:
+        #print('something aint right')
+        AdiacentValue = 0
+    return AdiacentValue
 
 
 list_of_coordinates = get_coordinates(grid)
@@ -55,28 +65,22 @@ dic_grid = list_of_lists_to_dict(grid)
 
 
 for i in list_of_coordinates:
-    coordinates = []
+
     coordinates = get_key(i)
-    try:
-        coordinates1 = (coordinates[0] - 1, coordinates[1] + 0)
-        print(dic_grid[coordinates1])
 
-    except KeyError:
-        print('something aint right')
-        coordinates1 = 0
-''' -1 +0 x
-    -1 -1
-    -1 +1
-    +0 -1
-    +0 +1
-    +1 +0
-    +1 -1
-    +1 +1
-'''
+    value1 = findAdiacentValues(-1, 0)
+    value2 = findAdiacentValues(-1, -1)
+    value3 = findAdiacentValues(-1, 1)
+    value4 = findAdiacentValues(0, -1)
+    value5 = findAdiacentValues(0, 1)
+    value6 = findAdiacentValues(1, 0)
+    value7 = findAdiacentValues(1, -1)
+    value8 = findAdiacentValues(1, 1)
 
+    totValues = value8 + value7 + value6 + value5 + value4 + value3 + value2 + value1
 
-coordinates = get_key(list_of_coordinates[3])
-coordinates1 = (coordinates[0] - 1, coordinates[1] + 0)
+    if totValues == 2 or totValues == 3:
+        dic_grid[coordinates] = 1
+    else:
+        dic_grid[coordinates] = 0
 
-
-print(dic_grid[coordinates1])
