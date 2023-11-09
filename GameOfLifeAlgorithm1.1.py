@@ -18,6 +18,7 @@ grid = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
+
 def get_coordinates(grid):
     x = -1
     y = -1
@@ -31,57 +32,43 @@ def get_coordinates(grid):
         y = -1
     print(container_list)
     return container_list
-
-
-
-def list_of_lists_to_dict(input_list):
-    result_dict = {}
-    for y, row in enumerate(input_list):
-        for x, item in enumerate(row):
-            result_dict[(x, y)] = item
-    print(result_dict)
-    return result_dict
-
-def get_key(list):
-    key = []
-    for i in list:
-        key.append(i)
-    return tuple(key)
-
-def findAdiacentValues(var1, var2):
+def findAdiacentValues(var1, var2, ncoordinates):
 
     try:
-        AdiacentValue = (coordinates[0] + var1, coordinates[1] + var2)
-        print(dic_grid[AdiacentValue])
-        return dic_grid[AdiacentValue]
+        AdiacentValue = grid[ncoordinates[0] + var1][ncoordinates[1] + var2]
 
     except KeyError:
         #print('something aint right')
         AdiacentValue = 0
+
     return AdiacentValue
 
 
-list_of_coordinates = get_coordinates(grid)
-dic_grid = list_of_lists_to_dict(grid)
+coordinates = get_coordinates(grid)
+
+print(grid)
+
+itr = 0
+for i in coordinates:
 
 
-for i in list_of_coordinates:
-
-    coordinates = get_key(i)
-
-    value1 = findAdiacentValues(-1, 0)
-    value2 = findAdiacentValues(-1, -1)
-    value3 = findAdiacentValues(-1, 1)
-    value4 = findAdiacentValues(0, -1)
-    value5 = findAdiacentValues(0, 1)
-    value6 = findAdiacentValues(1, 0)
-    value7 = findAdiacentValues(1, -1)
-    value8 = findAdiacentValues(1, 1)
+    value1 = findAdiacentValues(-1, 0, i)
+    value2 = findAdiacentValues(-1, -1, i)
+    value3 = findAdiacentValues(-1, 1, i)
+    value4 = findAdiacentValues(0, -1, i)
+    value5 = findAdiacentValues(0, 1, i)
+    value6 = findAdiacentValues(1, 0, i)
+    value7 = findAdiacentValues(1, -1, i)
+    value8 = findAdiacentValues(1, 1, i)
 
     totValues = value8 + value7 + value6 + value5 + value4 + value3 + value2 + value1
 
     if totValues == 2 or totValues == 3:
-        dic_grid[coordinates] = 1
+        grid[coordinates[0]][coordinates[1]] = 1
     else:
-        dic_grid[coordinates] = 0
+        grid[coordinates[itr][0]][coordinates[itr][1]] = 0
 
+    itr += 1
+
+print(itr)
+print(grid)
