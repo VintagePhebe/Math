@@ -1,15 +1,13 @@
 import random
 import time
 
-iterations = 0
-var = 10000
 def generate_random_integers():
     lower_limit = 1
-    upper_limit = var
+    upper_limit = 10000000
 
-    random_integers = random.sample(range(lower_limit, upper_limit + 1), upper_limit)
+    random_integers_as_strings = [str(num) for num in random.sample(range(lower_limit, upper_limit + 1), upper_limit)]
 
-    return random_integers
+    return random_integers_as_strings
 
 def pad_numbers(input_list):
     if not input_list:
@@ -23,17 +21,17 @@ def pad_numbers(input_list):
 
     return padded_list
 
-my_list = pad_numbers(generate_random_integers())
+my_list = generate_random_integers()
 
 
-def sort2(lst):
+def sort(lst):
 
-    max_digits = len(lst[0])
+    max_digits = max(len(num) for num in lst)
     buckets = [[] for _ in range(10)]
 
-    for i in range(max_digits):
+    for i in range(1, max_digits + 1):
         for number in lst:
-            digit = int(str(number)[-i]) if i < len(str(number)) else 0
+            digit = int(number[-i]) if i <= len(number) else 0
             buckets[digit].append(number)
 
         lst = [num for bucket in buckets for num in bucket]
@@ -43,18 +41,17 @@ def sort2(lst):
 
 print(my_list)
 
-# Record the start time
 start_time = time.time()
 
-print(sort2(my_list))
+###
+sorted_list = sort(my_list)
+#sorted_list = sorted(my_list)
+###
 
-
-
-# Record the end time
 end_time = time.time()
 
 
 elapsed_time = end_time - start_time
 
+print(sorted_list)
 print(f"The process took {elapsed_time} seconds.")
-
