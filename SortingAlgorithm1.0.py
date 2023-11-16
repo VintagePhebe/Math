@@ -2,7 +2,7 @@ import random
 import time
 
 iterations = 0
-var = 100
+var = 10000
 def generate_random_integers():
     lower_limit = 1
     upper_limit = var
@@ -11,7 +11,7 @@ def generate_random_integers():
 
     return random_integers
 
-random_integer_list = generate_random_integers()
+my_list = generate_random_integers()
 
 def sort(lst):
     i = 0
@@ -31,20 +31,19 @@ def sort(lst):
 
 
 
-print(random_integer_list)
-
 # Record the start time
 start_time = time.time()
 
 
-while not all(random_integer_list[i] <= random_integer_list[i + 1] for i in range(len(random_integer_list) - 1)):
-    random_integer_list = sort(random_integer_list)
+while not all(my_list[i] <= my_list[i + 1] for i in range(len(my_list) - 1)):
+    my_list = sort(my_list)
     iterations += 1
+
 
 
 # Record the end time
 end_time = time.time()
-print(random_integer_list)
+
 
 elapsed_time = end_time - start_time
 
