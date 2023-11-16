@@ -1,7 +1,8 @@
 import random
 import time
 
-var = 10000
+iterations = 0
+var = 100
 def generate_random_integers():
     lower_limit = 1
     upper_limit = var
@@ -29,21 +30,25 @@ def sort(lst):
     return lst
 
 
+
 print(random_integer_list)
 
 # Record the start time
 start_time = time.time()
 
-#print(sorted(random_integer_list))
+
 while not all(random_integer_list[i] <= random_integer_list[i + 1] for i in range(len(random_integer_list) - 1)):
     random_integer_list = sort(random_integer_list)
+    iterations += 1
 
 
 # Record the end time
 end_time = time.time()
+print(random_integer_list)
 
 elapsed_time = end_time - start_time
 
 print(f"The process took {elapsed_time} seconds.")
+print(f'it took {iterations} iterations of the algorithm')
 
 

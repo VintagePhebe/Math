@@ -1,6 +1,6 @@
 import pygame
 import sys
-
+import time
 # Define grid parameters
 GRID_WIDTH, GRID_HEIGHT = 18, 18  # Number of cells in each dimension
 CELL_SIZE = 50  # Size of each cell in pixels
@@ -76,6 +76,81 @@ def add_newlines(input_list, num_newlines):
         result.append(newline[:])
 
     return result
+
+
+def get_coordinates(grid):
+    x = -1
+    y = -1
+    container_list = []
+    for row in grid:
+        x += 1
+        for value in row:
+            y += 1
+            if value == 1:
+                container_list.append([y, x])
+        y = -1
+    return container_list
+
+def list_of_lists_to_dict(input_list):
+    result_dict = {}
+    for y, row in enumerate(input_list):
+        for x, item in enumerate(row):
+            result_dict[(x, y)] = item
+    return result_dict
+
+def get_key(input_list):
+    return tuple(input_list)
+
+def findAdiacentValues(coordinates, var1, var2):
+    try:
+        adiacent_value = (coordinates[0] + var1, coordinates[1] + var2)
+
+        if adiacent_value == 1:
+            return adiacent_value
+    except KeyError:
+        adiacent_value = 0
+    return adiacent_value
+
+def simulate_conways_game(grid):
+    list_of_coordinates = get_coordinates(grid)
+    dic_grid = list_of_lists_to_dict(grid)
+
+    for coordinates in list_of_coordinates:
+        value1 = findAdiacentValues(coordinates, -1, 0)
+        value2 = findAdiacentValues(coordinates, -1, -1)
+        value3 = findAdiacentValues(coordinates, -1, 1)
+        value4 = findAdiacentValues(coordinates, 0, -1)
+        value5 = findAdiacentValues(coordinates, 0, 1)
+        value6 = findAdiacentValues(coordinates, 1, 0)
+        value7 = findAdiacentValues(coordinates, 1, -1)
+        value8 = findAdiacentValues(coordinates, 1, 1)
+
+        tot_values = value8 + value7 + value6 + value5 + value4 + value3 + value2 + value1
+
+        if tot_values == 2 or tot_values == 3:
+            dic_grid[get_key(coordinates)] = 1
+        else:
+            dic_grid[get_key(coordinates)] = 0
+
+    return dic_grid
+
+def dic_to_list_of_lists(input_dict):
+    max_x = max(key[0] for key in input_dict)
+    max_y = max(key[1] for key in input_dict)
+
+    result = [[0] * (max_x + 1) for _ in range(max_y + 1)]
+
+    for key, value in input_dict.items():
+        result[key[1]][key[0]] = value
+
+    return result
+
+
+while post_run:
+    time.sleep(2)
+    new_dic = simulate_conways_game(grid)
+    grid = dic_to_list_of_lists(new_dic)
+    draw_grid()
 
 # Quit Pygame
 for sublist in grid:
