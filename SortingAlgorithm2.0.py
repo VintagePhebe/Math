@@ -33,7 +33,7 @@ def sort2(lst):
 
     for i in range(max_digits):
         for number in lst:
-            digit = int(str(number)[-i]) if i < len(str(number)) else 0
+            digit = int(str(number)[-i]) if i <= len(str(number)) else 0
             buckets[digit].append(number)
 
         lst = [num for bucket in buckets for num in bucket]
